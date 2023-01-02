@@ -35,6 +35,8 @@ static NSString *const RCTMapViewKey = @"MapView";
 
 @interface AIRMapManager() <MKMapViewDelegate, UIGestureRecognizerDelegate>
 
+@property (strong, nonatomic) CLLocationManager *manager;
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer;
 
 @end
@@ -77,6 +79,9 @@ RCT_EXPORT_MODULE()
     [map addGestureRecognizer:doubleTap];
     [map addGestureRecognizer:longPress];
     [map addGestureRecognizer:drag];
+
+    self.manager = [[CLLocationManager alloc] init];
+    [self.manager startUpdatingLocation];
 
     return map;
 }
@@ -919,7 +924,7 @@ static int kDragCenterContext;
                          @"accuracy": @(location.location.horizontalAccuracy),
                          @"altitudeAccuracy": @(location.location.verticalAccuracy),
                          @"speed": @(location.location.speed),
-                         @"heading": @(location.location.course),
+                         @"heading": @(self.manager.heading.trueHeading),
                          }
                  };
     
